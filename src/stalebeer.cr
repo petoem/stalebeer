@@ -12,7 +12,7 @@ module StaleBeer
         loop { @cache.delete @waiter_channel.receive }
       end
     end
-    
+
     # Same as `#get`.
     def [](key : K) : V?
       get key
@@ -69,14 +69,14 @@ module StaleBeer
       @cache.keys
     end
 
-    protected def raw : Hash(K,Beer(V))
+    protected def raw : Hash(K, Beer(V))
       @cache
     end
 
     private class Waiter(K, V)
       @waiter : Concurrent::Future(Nil)
       @last_clean : Time
-  
+
       def initialize(@cache : Cache(K, V), @channel : Channel(K))
         @last_clean = Time.now
         @waiter = delay 0.1, &->clean
