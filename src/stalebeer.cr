@@ -4,6 +4,7 @@ module StaleBeer
   class Cache(K, V)
     @cache = Hash(K, Beer(V)).new
 
+    # Creates a new instance and sets the time after which key/value pairs expire.
     def initialize(@default_cache_time : Time::Span = 10.minutes)
       @waiter_channel = Channel(K).new
       @waiter = Waiter(K, V).new self, @waiter_channel
@@ -12,27 +13,33 @@ module StaleBeer
       end
     end
     
+    # Same as `#get`.
     def [](key : K) : V?
       get key
     end
 
+    # Returns the value for the key or `nil` if the key does not exist or is expired.
     def get(key : K) : V?
       @cache[key]?.try &.value
     end
 
+    # The same as `#set`.
     def []=(key : K, value : V)
       set key, value, @default_cache_time
     end
 
+    # The same as `#set`.
     def []=(key : K, expiration : Time::Span, value : V)
       set key, value, expiration
     end
 
+    # Adds the key/value pair to the cache and sets the time it should live.
     def set(key : K, value : V, expiration : Time::Span = @default_cache_time)
       @cache[key] = Beer(V).new value, expiration
       nil
     end
 
+    # Resets the time to the given one and returns `true` if successful.
     def refresh(key : K, time : Time::Span = @default_cache_time) : Bool
       if beer = @cache[key]?
         @cache[key] = beer.refresh time
@@ -42,10 +49,12 @@ module StaleBeer
       end
     end
 
+    # Returns the remaining time the key has left.
     def expires(key : K) : Time::Span?
       @cache[key]?.try &.time_span
     end
 
+    # Deletes all key/value pairs from the cache.
     def purge : Nil
       @cache.clear
       nil
@@ -55,6 +64,7 @@ module StaleBeer
       @cache.values
     end
 
+    # Returns an array of all keys in cache.
     def keys : Array(K)
       @cache.keys
     end
