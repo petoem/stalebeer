@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="300" src="https://cdn.rawgit.com/twitter/twemoji/gh-pages/svg/1f37a.svg">
+  <img width="225" src="https://cdn.rawgit.com/twitter/twemoji/gh-pages/svg/1f37a.svg">
   <h2 align="center">StaleBeer</h2>
   <p align="center">Yet another key/value cache where pairs can expire<p>
   <p align="center">
@@ -73,3 +73,9 @@ StaleBeer::Cache(K, V)
 ## Contributors
 
 - [petoem](https://github.com/petoem) Michael Petö - creator, maintainer
+
+## License
+
+Code licensed under the MIT [License](https://github.com/petoem/stalebeer/blob/master/LICENSE)
+
+Beer image from [Twitter Emoji (Twemoji)](https://github.com/twitter/twemoji)
