@@ -15,7 +15,7 @@ key = cache.keys[rand(cache.keys.size)]
 Benchmark.ips do |x|
   x.report("get key") { cache.get key }
   x.report("get [key]") { cache[key] }
-  x.report("refresh") { cache.refresh key }  
+  x.report("refresh") { cache.refresh key }
   x.report("refresh with Time::Span") { cache.refresh key, 20.minutes }
   x.report("expires") { cache.expires key }
   x.report("benchmark generation") { rand }
