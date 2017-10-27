@@ -69,6 +69,11 @@ module StaleBeer
       @cache.keys
     end
 
+    # Returns the number of elements in the cache.
+    def size : Int32
+      @cache.size
+    end
+
     protected def raw : Hash(K, Beer(V))
       @cache
     end
