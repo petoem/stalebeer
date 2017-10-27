@@ -5,9 +5,9 @@ module StaleBeer
     @cache = Hash(K, Beer(V)).new
 
     # Creates a new instance and sets the time after which key/value pairs expire.
-    def initialize(@default_cache_time : Time::Span = 10.minutes)
+    def initialize(@default_cache_time : Time::Span = 10.minutes, cleanup_interval : Time::Span = 500.milliseconds)
       @waiter_channel = Channel(K).new
-      @waiter = Waiter(K, V).new self, @waiter_channel
+      @waiter = Waiter(K, V).new self, @waiter_channel, cleanup_interval
       spawn do
         loop { @cache.delete @waiter_channel.receive }
       end
@@ -82,15 +82,15 @@ module StaleBeer
       @waiter : Concurrent::Future(Nil)
       @last_clean : Time
 
-      def initialize(@cache : Cache(K, V), @channel : Channel(K))
+      def initialize(@cache : Cache(K, V), @channel : Channel(K), @cleanup_interval : Time::Span)
         @last_clean = Time.now
-        @waiter = delay 0.1, &->clean
+        @waiter = delay @cleanup_interval, &->clean
       end
 
       private def clean
         last_clean, @last_clean = @last_clean, Time.now
         last_clean = @last_clean - last_clean
-        @waiter = delay 0.1, &->clean
+        @waiter = delay @cleanup_interval, &->clean
         @cache.raw.each do |key, beer|
           @cache.raw[key] = beer.stand last_clean
           @channel.send key if @cache.raw[key].time_span <= 0.seconds
