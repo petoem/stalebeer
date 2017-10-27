@@ -60,6 +60,9 @@ StaleBeer::Cache(K, V)
 
 # Returns an array of all keys in cache
 .keys : Array(K)
+
+# Returns the number of elements in the cache.
+.size : Int32
 ```
 
 ## Contributing
